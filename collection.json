@@ -1,0 +1,677 @@
+{
+	"info": {
+		"_postman_id": "d387b5db-ba36-4304-9323-adfb0c35f76b",
+		"name": "API-Testing",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20351469"
+	},
+	"item": [
+		{
+			"name": "health-check",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseurl}}notes/api/health-check",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"health-check"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const timestamp = Date.now();\r",
+							"\r",
+							"const name = `TestUser${timestamp}`;\r",
+							"const email = `testuser${timestamp}@example.com`;\r",
+							"const password = `Test@${timestamp}`;\r",
+							"\r",
+							"pm.environment.set(\"name\", name);\r",
+							"pm.environment.set(\"email\", email);\r",
+							"pm.environment.set(\"password\", password);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Message is 'User account created successfully'\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"User account created successfully\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text",
+						"disabled": true
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "{{name}}",
+							"type": "text"
+						},
+						{
+							"key": "email",
+							"value": "{{email}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseurl}}notes/api/users/register",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"users",
+						"register"
+					],
+					"query": [
+						{
+							"key": "name ",
+							"value": "Roshan",
+							"disabled": true
+						},
+						{
+							"key": "email ",
+							"value": "test567@yopmail.com",
+							"disabled": true
+						},
+						{
+							"key": "password ",
+							"value": "Test@123",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 200) {\r",
+							"    let jsonData = pm.response.json();\r",
+							"\r",
+							"    if (jsonData && jsonData.data && jsonData.data.token) {\r",
+							"        let token = jsonData.data.token;\r",
+							"        pm.environment.set(\"Token\", token); // ✅ Save to environment\r",
+							"        console.log(\"Saved token to environment:\", token);\r",
+							"    } else {\r",
+							"        console.log(\"Token not found in response data.\");\r",
+							"    }\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "kxrg@yopmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "test@123",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseurl}}notes/api/users/login",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Profile",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "email",
+							"value": "{{email}}",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "{{password}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseurl}}notes/api/users/profile",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Profile",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const timestamp = Date.now();\r",
+							"\r",
+							"const companies = [\r",
+							"  'TechNova', \r",
+							"  'NeoSoft', \r",
+							"  'StellarCorp', \r",
+							"  'InnoSys', \r",
+							"  'PixelWorks', \r",
+							"  'NextGen Solutions', \r",
+							"  'CodeBridge', \r",
+							"  'DataNexus', \r",
+							"  'SoftWave', \r",
+							"  'BrightEdge'\r",
+							"];\r",
+							"\r",
+							"const company = companies[Math.floor(Math.random() * companies.length)] + timestamp;\r",
+							"const phone = '98' + Math.floor(10000000 + Math.random() * 90000000);\r",
+							"\r",
+							"pm.environment.set(\"phone\", phone);\r",
+							"pm.environment.set(\"company\", company);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PATCH",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "name",
+							"value": "{{name}}",
+							"type": "text"
+						},
+						{
+							"key": "phone",
+							"value": "{{phone}}",
+							"type": "text"
+						},
+						{
+							"key": "company",
+							"value": "{{company}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseurl}}notes/api/users/profile",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"users",
+						"profile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add-Notes",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Message is 'Note successfully created'\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Note successfully created\");\r",
+							"});\r",
+							"\r",
+							"if (pm.response.code === 200) {\r",
+							"    let jsonData = pm.response.json();\r",
+							"\r",
+							"    if (jsonData && jsonData.data) {\r",
+							"        // Save note ID\r",
+							"        if (jsonData.data.id) {\r",
+							"            let noteId = jsonData.data.id;\r",
+							"            pm.environment.set(\"noteId\", noteId);\r",
+							"            console.log(\"Saved noteId to environment:\", noteId);\r",
+							"        } else {\r",
+							"            console.log(\"Note ID not found.\");\r",
+							"        }\r",
+							"\r",
+							"        // Save user ID\r",
+							"        if (jsonData.data.user_id) {\r",
+							"            let userId = jsonData.data.user_id;\r",
+							"            pm.environment.set(\"userId\", userId);\r",
+							"            console.log(\"Saved userId to environment:\", userId);\r",
+							"        } else {\r",
+							"            console.log(\"User ID not found.\");\r",
+							"        }\r",
+							"    } else {\r",
+							"        console.log(\"Response data missing.\");\r",
+							"    }\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const timestamp = Date.now();\r",
+							"\r",
+							"const title = `Task ${timestamp}`;\r",
+							"const description = `Auto-generated description at ${new Date(timestamp).toLocaleString()}`;\r",
+							"const categories = ['Home', 'Work', 'Personal'];\r",
+							"const category = categories[Math.floor(Math.random() * categories.length)];\r",
+							"\r",
+							"pm.environment.set(\"title\", title);\r",
+							"pm.environment.set(\"description\", description);\r",
+							"pm.environment.set(\"category\", category);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "{{title}}",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "{{description}}",
+							"type": "text"
+						},
+						{
+							"key": "category",
+							"value": "{{category}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseurl}}notes/api/notes",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "All Note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Message is 'Notes successfully retrieved'\", function () {\r",
+							"    const responseJson = pm.response.json();\r",
+							"    pm.expect(responseJson.message).to.eql(\"Notes successfully retrieved\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseurl}}notes/api/notes",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"notes"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "View-Note",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{baseurl}}notes/api/notes/:id",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"notes",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{noteId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update-Note",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"const timestamp = Date.now();\r",
+							"\r",
+							"const title = `Task ${timestamp}`;\r",
+							"const description = `Auto-generated description at ${new Date(timestamp).toLocaleString()}`;\r",
+							"const categories = ['Home', 'Work', 'Personal'];\r",
+							"const category = categories[Math.floor(Math.random() * categories.length)];\r",
+							"\r",
+							"pm.environment.set(\"title\", title);\r",
+							"pm.environment.set(\"description\", description);\r",
+							"pm.environment.set(\"category\", category);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "title",
+							"value": "{{title}}",
+							"type": "text"
+						},
+						{
+							"key": "description",
+							"value": "{{description}}",
+							"type": "text"
+						},
+						{
+							"key": "completed",
+							"value": "true",
+							"type": "text"
+						},
+						{
+							"key": "category",
+							"value": "{{category}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseurl}}notes/api/notes/:id",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"notes",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{noteId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete Note",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Success is true\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.success).to.be.true;\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Message is 'Note successfully deleted'\", function () {\r",
+							"    const jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.message).to.eql(\"Note successfully deleted\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "x-auth-token",
+						"value": "{{Token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "title",
+							"value": "drink water",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "description",
+							"value": "Category of the note (\"Home\", \"Work\" or \"Personal\")",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "completed",
+							"value": "true",
+							"type": "text",
+							"disabled": true
+						},
+						{
+							"key": "category",
+							"value": "Personal",
+							"type": "text",
+							"disabled": true
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseurl}}notes/api/notes/:id",
+					"host": [
+						"{{baseurl}}notes"
+					],
+					"path": [
+						"api",
+						"notes",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{noteId}}"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
