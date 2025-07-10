@@ -1,6 +1,6 @@
 # 📂 QA Automation Assessment – Grepsr
 
-### 👨‍💻 Candidate: Roshan Pokhel  
+### 👨‍💻 Candidate: Roshan Pokhrel  
 ### 📅 Submitted on: [7/10/2025]
 
 ---
